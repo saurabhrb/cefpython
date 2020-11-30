@@ -267,9 +267,6 @@ cdef class PyBrowser:
                     "OnScrollOffsetChanged",
                     "StartDragging", "UpdateDragCursor",
                     "OnTextSelectionChanged"]
-            # V8ContextHandler
-            self.allowedClientCallbacks += ["OnContextCreated",
-                    "OnContextReleased"]
             # JavascriptDialogHandler
             self.allowedClientCallbacks += ["OnJavascriptDialog",
                     "OnBeforeUnloadJavascriptDialog",

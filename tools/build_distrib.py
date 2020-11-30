@@ -7,14 +7,13 @@ Build distribution packages for all architectures and all supported
 python versions.
 
 Usage:
-    build_distrib.py VERSION [--unittests] [--no-rebuild] [--no-automate]
-                             [--allow-partial]
+    build_distrib.py VERSION [--no-run-examples] [--no-rebuild]
 
 Options:
     VERSION            Version number eg. 50.0
-    --unittests        Run only unit tests. Do not run examples while building
-                       cefpython modules. Examples require interaction such as
-                       closing window before proceeding.
+    --no-run-examples  Do not run examples while building cefpython modules.
+                       Examples require interaction, closing window before
+                       proceeding. Only unit tests will be run in such case.
     --no-rebuild       Do not rebuild cefpython modules. For internal use
                        so that changes to packaging can be quickly tested.
     --no-automate      Do not run automate.py --prebuilt-cef. This flag
@@ -74,7 +73,7 @@ import zipfile
 
 # Command line args
 VERSION = ""
-UNITTESTS = False
+NO_RUN_EXAMPLES = False
 NO_REBUILD = False
 NO_AUTOMATE = False
 ALLOW_PARTIAL = False
@@ -153,15 +152,15 @@ def main():
 
 
 def command_line_args():
-    global VERSION, UNITTESTS, NO_REBUILD, NO_AUTOMATE, ALLOW_PARTIAL
+    global VERSION, NO_RUN_EXAMPLES, NO_REBUILD, NO_AUTOMATE, ALLOW_PARTIAL
     version = get_version_from_command_line_args(__file__)
     if not version or "--help" in sys.argv:
         print(__doc__)
         sys.exit(1)
     VERSION = version
-    if "--unittests" in sys.argv:
-        UNITTESTS = True
-        sys.argv.remove("--unittests")
+    if "--no-run-examples" in sys.argv:
+        NO_RUN_EXAMPLES = True
+        sys.argv.remove("--no-run-examples")
     if "--no-rebuild" in sys.argv:
         NO_REBUILD = True
         sys.argv.remove("--no-rebuild")
@@ -489,8 +488,8 @@ def build_cefpython_modules(pythons, arch):
         print("[build_distrib.py] Build cefpython module for {python_name}"
               .format(python_name=python["name"]))
         flags = ""
-        if UNITTESTS:
-            flags += " --unittests"
+        if NO_RUN_EXAMPLES:
+            flags += " --no-run-examples"
         # On Linux/Mac Makefiles are used and must pass --clean flag
         command = ("\"{python}\" {build_py} {version} --clean {flags}"
                    .format(python=python["executable"],
