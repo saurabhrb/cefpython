@@ -119,16 +119,8 @@ cdef class PyRequest:
                     retMultipart.append(pyData)
                 else:
                     # Content-Type: application/x-www-form-urlencoded
-                    quoted = urlparse_quote(pyData, safe="=")
-                    retUrlEncoded.update(urlparse.parse_qsl(qs=quoted,
+                    retUrlEncoded.update(urlparse.parse_qsl(qs=pyData, 
                             keep_blank_values=True))
-                    if PY_MAJOR_VERSION >= 3:
-                        retUrlEncoded_copy = copy.deepcopy(retUrlEncoded)
-                        retUrlEncoded = dict()
-                        for key in retUrlEncoded_copy:
-                            retUrlEncoded[key.encode("utf-8", "replace")] =\
-                                    retUrlEncoded_copy[key].encode(
-                                                    "utf-8", "replace")
             elif postDataElement.get().GetType() == cef_types.PDE_TYPE_FILE:
                 pyFile = CefToPyBytes(postDataElement.get().GetFile())
                 retMultipart.append(b"@"+pyFile)
@@ -164,7 +156,7 @@ cdef class PyRequest:
                 postData.get().AddElement(postDataElement)
             self.GetCefRequest().get().SetPostData(postData)
         elif type(pyPostData) == dict:
-            pyElement = urllib_urlencode(pyPostData).encode("utf-8", "replace")
+            pyElement = urllib_urlencode(pyPostData).encode()
             postDataElement = CefPostDataElement_Create()
             postDataElement.get().SetToBytes(len(pyElement), <char*>pyElement)
             postData.get().AddElement(postDataElement)
