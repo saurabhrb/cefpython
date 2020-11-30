@@ -13,8 +13,6 @@
 # Known issue on Linux: When typing url, mouse must be over url
 # entry widget otherwise keyboard focus is lost (Issue #255
 # and Issue #284).
-# Other focus issues discussed in Issue #535.
-
 
 from cefpython3 import cefpython as cef
 import ctypes
@@ -155,7 +153,6 @@ class BrowserFrame(tk.Frame):
         self.bind("<FocusIn>", self.on_focus_in)
         self.bind("<FocusOut>", self.on_focus_out)
         self.bind("<Configure>", self.on_configure)
-        """For focus problems see Issue #255 and Issue #535. """
         self.focus_set()
 
     def embed_browser(self):
@@ -219,6 +216,8 @@ class BrowserFrame(tk.Frame):
 
     def on_focus_out(self, _):
         logger.debug("BrowserFrame.on_focus_out")
+        if self.browser:
+            self.browser.SetFocus(False)
 
     def on_root_close(self):
         if self.browser:
@@ -243,7 +242,6 @@ class LoadHandler(object):
 
 
 class FocusHandler(object):
-    """For focus problems see Issue #255 and Issue #535. """
 
     def __init__(self, browser_frame):
         self.browser_frame = browser_frame
@@ -255,10 +253,13 @@ class FocusHandler(object):
     def OnSetFocus(self, source, **_):
         logger.debug("FocusHandler.OnSetFocus, source={source}"
                      .format(source=source))
-        return True
+        return False
 
     def OnGotFocus(self, **_):
+        """Fix CEF focus issues (#255). Call browser frame's focus_set
+           to get rid of type cursor in url entry widget."""
         logger.debug("FocusHandler.OnGotFocus")
+        self.browser_frame.focus_set()
 
 
 class NavigationBar(tk.Frame):
@@ -339,7 +340,7 @@ class NavigationBar(tk.Frame):
             self.master.get_browser().LoadUrl(self.url_entry.get())
 
     def on_button1(self, _):
-        """For focus problems see Issue #255 and Issue #535. """
+        """Fix CEF focus issues (#255). See also FocusHandler.OnGotFocus."""
         logger.debug("NavigationBar.on_button1")
         self.master.master.focus_force()
 
