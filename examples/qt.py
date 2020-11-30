@@ -337,11 +337,7 @@ class FocusHandler(object):
         self.cef_widget = cef_widget
 
     def OnSetFocus(self, **_):
-        print("[qt.py] FocusHandler.OnSetFocus")
-        if LINUX:
-            return False
-        else:
-            return True
+        pass
 
     def OnGotFocus(self, browser, **_):
         # Temporary fix no. 1 for focus issues on Linux (Issue #284)
