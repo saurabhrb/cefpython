@@ -76,7 +76,6 @@ cpdef py_bool IsFunctionOrMethod(object valueType):
     if (valueType == types.FunctionType
             or valueType == types.MethodType
             or valueType == types.BuiltinFunctionType
-            or valueType == types.BuiltinMethodType
-            or valueType.__name__ == "cython_function_or_method"):
+            or valueType == types.BuiltinMethodType):
         return True
     return False
