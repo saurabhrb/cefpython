@@ -219,9 +219,6 @@ class BrowserFrame(tk.Frame):
 
     def on_focus_out(self, _):
         logger.debug("BrowserFrame.on_focus_out")
-        """For focus problems see Issue #255 and Issue #535. """
-        if LINUX and self.browser:
-            self.browser.SetFocus(False)
 
     def on_root_close(self):
         if self.browser:
@@ -258,15 +255,10 @@ class FocusHandler(object):
     def OnSetFocus(self, source, **_):
         logger.debug("FocusHandler.OnSetFocus, source={source}"
                      .format(source=source))
-        if LINUX:
-            return False
-        else:
-            return True
+        return True
 
     def OnGotFocus(self, **_):
         logger.debug("FocusHandler.OnGotFocus")
-        if LINUX:
-            self.browser_frame.focus_set()
 
 
 class NavigationBar(tk.Frame):
